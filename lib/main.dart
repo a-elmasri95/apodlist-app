@@ -18,9 +18,14 @@ class AppOne extends StatelessWidget {
       theme: ThemeData.dark(),
       home: Scaffold(
         appBar: AppBar(
+            leading: const Icon(
+              Icons.refresh,
+              color: Colors.white,
+            ),
             title: const Text(
-              'Cool Dashboard',
+              'Dashboard',
               style: TextStyle(
+                  color: Colors.white,
                   fontSize: 18.0,
                   fontWeight: FontWeight.bold,
                   fontStyle: FontStyle.normal),
