@@ -1,8 +1,6 @@
 import 'dart:convert';
-import 'package:app_one/utils/colors.dart';
 import 'package:app_one/web_data/models.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:http/http.dart';
 
 class HomeWidget extends StatefulWidget {
@@ -13,21 +11,30 @@ class HomeWidget extends StatefulWidget {
 }
 
 class _HomeWidgetState extends State<HomeWidget> {
-  final PageController pageController = PageController();
-  final ScrollController scrollController = ScrollController();
+  final ScrollController _scrollController = ScrollController();
+  final TextEditingController _textEditingController1 = TextEditingController();
+  final TextEditingController _textEditingController2 = TextEditingController();
+  String webUrl =
+      'https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY&start_date=2021-09-01&end_date=2022-01-01';
+  String endpointUrl = 'https://api.nasa.gov/planetary/apod';
+  Map<String, String> queryParams = {
+    'api_key': 'DEMO_KEY',
+    'start_date': '2021-09-01',
+    'end_date': '2022-01-1',
+  };
   late Future<List<MemeModel>> models;
 
   @override
   void initState() {
     super.initState();
     models = fetchModel();
-    scrollController.addListener(() {});
   }
 
   Future<List<MemeModel>> fetchModel() async {
     List<MemeModel> modelList = [];
-    final response = await get(Uri.parse(
-        'https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY&start_date=2021-09-01&end_date=2022-01-01'));
+    Uri requestUrl =
+        Uri.parse(endpointUrl).replace(queryParameters: queryParams);
+    final response = await get(requestUrl);
     if (response.statusCode == 200) {
       var list = jsonDecode(response.body);
       for (var i = 0; i < list.length; i++) {
@@ -37,15 +44,34 @@ class _HomeWidgetState extends State<HomeWidget> {
       }
       return modelList; //though this returns JSONArray and not object after jsonDecode
     } else {
-      throw Exception('Failed to load the models');
+      return [];
+    }
+  }
+
+  updateList() {
+    String startDate = _textEditingController1.text;
+    String endDate = _textEditingController2.text;
+    if (startDate.isNotEmpty && endDate.isNotEmpty) {
+      setState(() {
+        queryParams['start_date'] = startDate;
+        queryParams['end_date'] = endDate;
+        models = fetchModel();
+      });
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('Please insert all dates'),
+        backgroundColor: Colors.white,
+      ));
+      throw Exception('Fill all fields.');
     }
   }
 
   @override
   void dispose() {
     super.dispose();
-    pageController.dispose();
-    scrollController.dispose();
+    _scrollController.dispose();
+    _textEditingController1.dispose();
+    _textEditingController2.dispose();
   }
 
   @override
@@ -55,7 +81,7 @@ class _HomeWidgetState extends State<HomeWidget> {
     return SafeArea(
       top: true,
       child: Container(
-        color: AppColors.royalBlue,
+        color: Colors.black,
         child: FutureBuilder<List<MemeModel>>(
           future: models,
           builder: (context, snapshot) {
@@ -76,6 +102,7 @@ class _HomeWidgetState extends State<HomeWidget> {
                         ),
                         Flexible(
                           child: TextField(
+                            controller: _textEditingController1,
                             keyboardType: TextInputType.datetime,
                             decoration: const InputDecoration(
                               hintText: 'Start Date',
@@ -93,6 +120,7 @@ class _HomeWidgetState extends State<HomeWidget> {
                         ),
                         Flexible(
                           child: TextField(
+                            controller: _textEditingController2,
                             decoration: const InputDecoration(
                               hintText: 'End Date',
                               hintStyle: TextStyle(
@@ -107,10 +135,10 @@ class _HomeWidgetState extends State<HomeWidget> {
                         const SizedBox(
                           width: 100,
                         ),
-                        const IconButton(
-                          onPressed: null,
-                          icon: Icon(
-                            Icons.replay_circle_filled_rounded,
+                        IconButton(
+                          onPressed: updateList,
+                          icon: const Icon(
+                            Icons.refresh,
                             color: Colors.white,
                           ),
                         ),
@@ -123,12 +151,12 @@ class _HomeWidgetState extends State<HomeWidget> {
                   Expanded(
                     flex: 1,
                     child: Scrollbar(
-                      controller: scrollController,
+                      controller: _scrollController,
                       isAlwaysShown: false,
                       showTrackOnHover: true,
                       thickness: 5.0,
                       child: ListView.builder(
-                        controller: scrollController,
+                        controller: _scrollController,
                         itemCount: snapshot.data!.length,
                         itemBuilder: (context, index) {
                           return Card(
@@ -136,13 +164,16 @@ class _HomeWidgetState extends State<HomeWidget> {
                               child: ListTile(
                                 textColor: Colors.white,
                                 selected: listItemSelected,
-                                tileColor: Colors.black,
+                                tileColor: const Color(0xFFF5F5DC),
                                 onTap: () {},
                                 dense: true,
                                 title: Text(
                                   snapshot.data![index].name,
+                                  style: const TextStyle(color: Colors.black),
                                 ),
-                                subtitle: Text(snapshot.data![index].date),
+                                subtitle: Text(snapshot.data![index].date,
+                                    style:
+                                        const TextStyle(color: Colors.black)),
                                 leading: CircleAvatar(
                                   backgroundColor: Colors.transparent,
                                   radius: 30.0,
@@ -161,7 +192,11 @@ class _HomeWidgetState extends State<HomeWidget> {
             } else if (snapshot.hasError) {
               return Text('${snapshot.error}');
             }
-            return const CircularProgressIndicator();
+            return const Center(
+                child: CircularProgressIndicator(
+              backgroundColor: Colors.black,
+              color: Colors.red,
+            ));
           },
         ),
       ),
