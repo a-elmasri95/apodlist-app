@@ -1,15 +1,15 @@
-class Model {
-  final int userId;
-  final int id;
-  final String title;
+class MemeModel {
+  final String name;
+  final String url;
+  final String date;
 
-  const Model({required this.userId, required this.id, required this.title});
+  const MemeModel({required this.name, required this.url, required this.date});
 
-  factory Model.fromJson(Map<String, dynamic> json) {
-    return Model(
-      userId: json['userId'],
-      id: json['id'],
-      title: json['title'],
+  factory MemeModel.fromJson(Map<String, dynamic> json) {
+    return MemeModel(
+      name: json['title'],
+      date: json['date'],
+      url: json['url'],
     );
   }
 }

@@ -1,4 +1,3 @@
-import 'package:app_one/utils/colors.dart';
 import 'package:flutter/material.dart';
 
 import 'my_widgets/home_widget.dart';
@@ -18,20 +17,15 @@ class AppOne extends StatelessWidget {
       theme: ThemeData.dark(),
       home: Scaffold(
         appBar: AppBar(
-            leading: const Icon(
-              Icons.refresh,
-              color: Colors.white,
-            ),
-            title: const Text(
-              'Dashboard',
-              style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18.0,
-                  fontWeight: FontWeight.bold,
-                  fontStyle: FontStyle.normal),
-            ),
+            leading: const Image(
+                image: NetworkImage(
+                    'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e5/NASA_logo.svg/2449px-NASA_logo.svg.png')),
+            title: const Text('APOD'),
+            toolbarHeight: 40.0,
+            leadingWidth: 50.0,
+            foregroundColor: Colors.white,
             centerTitle: true,
-            backgroundColor: AppColors.royalBlue),
+            backgroundColor: Colors.blueGrey),
         body: const HomeWidget(),
         resizeToAvoidBottomInset: true,
         backgroundColor: Colors.transparent,
