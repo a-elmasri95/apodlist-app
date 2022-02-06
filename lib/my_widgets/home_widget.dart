@@ -23,6 +23,7 @@ class _HomeWidgetState extends State<HomeWidget> {
     'end_date': '2022-01-1',
   };
   late Future<List<MemeModel>> models;
+  bool isloading = false;
 
   @override
   void initState() {
@@ -42,8 +43,14 @@ class _HomeWidgetState extends State<HomeWidget> {
           modelList.add(MemeModel.fromJson(list[i]));
         }
       }
+      setState(() {
+        isloading = false;
+      });
       return modelList; //though this returns JSONArray and not object after jsonDecode
     } else {
+      setState(() {
+        isloading = false;
+      });
       return [];
     }
   }
@@ -55,6 +62,7 @@ class _HomeWidgetState extends State<HomeWidget> {
       setState(() {
         queryParams['start_date'] = startDate;
         queryParams['end_date'] = endDate;
+        isloading = true;
         models = fetchModel();
       });
     } else {
@@ -155,36 +163,43 @@ class _HomeWidgetState extends State<HomeWidget> {
                       isAlwaysShown: false,
                       showTrackOnHover: true,
                       thickness: 5.0,
-                      child: ListView.builder(
-                        controller: _scrollController,
-                        itemCount: snapshot.data!.length,
-                        itemBuilder: (context, index) {
-                          return Card(
-                              borderOnForeground: false,
-                              child: ListTile(
-                                textColor: Colors.white,
-                                selected: listItemSelected,
-                                tileColor: const Color(0xFFF5F5DC),
-                                onTap: () {},
-                                dense: true,
-                                title: Text(
-                                  snapshot.data![index].name,
-                                  style: const TextStyle(color: Colors.black),
-                                ),
-                                subtitle: Text(snapshot.data![index].date,
-                                    style:
-                                        const TextStyle(color: Colors.black)),
-                                leading: CircleAvatar(
-                                  backgroundColor: Colors.transparent,
-                                  radius: 30.0,
-                                  child: Image(
-                                    image:
-                                        NetworkImage(snapshot.data![index].url),
-                                  ),
-                                ),
-                              ));
-                        },
-                      ),
+                      child: isloading == true
+                          ? const Center(
+                              child: CircularProgressIndicator(
+                              backgroundColor: Colors.black,
+                              color: Colors.red,
+                            ))
+                          : ListView.builder(
+                              controller: _scrollController,
+                              itemCount: snapshot.data!.length,
+                              itemBuilder: (context, index) {
+                                return Card(
+                                    borderOnForeground: false,
+                                    child: ListTile(
+                                      textColor: Colors.white,
+                                      selected: listItemSelected,
+                                      tileColor: const Color(0xFFF5F5DC),
+                                      onTap: () {},
+                                      dense: true,
+                                      title: Text(
+                                        snapshot.data![index].name,
+                                        style: const TextStyle(
+                                            color: Colors.black),
+                                      ),
+                                      subtitle: Text(snapshot.data![index].date,
+                                          style: const TextStyle(
+                                              color: Colors.black)),
+                                      leading: CircleAvatar(
+                                        backgroundColor: Colors.transparent,
+                                        radius: 30.0,
+                                        child: Image(
+                                          image: NetworkImage(
+                                              snapshot.data![index].url),
+                                        ),
+                                      ),
+                                    ));
+                              },
+                            ),
                     ),
                   ),
                 ],
