@@ -25,7 +25,7 @@ class AppOne extends StatelessWidget {
             leadingWidth: 50.0,
             foregroundColor: Colors.white,
             centerTitle: true,
-            backgroundColor: Colors.blueGrey),
+            backgroundColor: const Color(0xFF363939)),
         body: const HomeWidget(),
         resizeToAvoidBottomInset: true,
         backgroundColor: Colors.transparent,

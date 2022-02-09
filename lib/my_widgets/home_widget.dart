@@ -1,4 +1,6 @@
 import 'dart:convert';
+import 'package:app_one/my_widgets/search_toolbar.dart';
+import 'package:app_one/utils/colors.dart';
 import 'package:app_one/web_data/models.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
@@ -12,18 +14,18 @@ class HomeWidget extends StatefulWidget {
 
 class _HomeWidgetState extends State<HomeWidget> {
   final ScrollController _scrollController = ScrollController();
-  final TextEditingController _textEditingController1 = TextEditingController();
-  final TextEditingController _textEditingController2 = TextEditingController();
   String webUrl =
       'https://api.nasa.gov/planetary/apod?api_key=DEMO_KEY&start_date=2021-09-01&end_date=2022-01-01';
   String endpointUrl = 'https://api.nasa.gov/planetary/apod';
   Map<String, String> queryParams = {
-    'api_key': 'DEMO_KEY',
+    'api_key': 'JfsVH2sdKphwxnyRhTsgqIUjCms4udNUqLutA2mL',
     'start_date': '2021-09-01',
     'end_date': '2022-01-1',
   };
   late Future<List<MemeModel>> models;
   bool isloading = false;
+  String stDate = '';
+  String enDate = '';
 
   @override
   void initState() {
@@ -56,9 +58,11 @@ class _HomeWidgetState extends State<HomeWidget> {
   }
 
   updateList() {
-    String startDate = _textEditingController1.text;
-    String endDate = _textEditingController2.text;
-    if (startDate.isNotEmpty && endDate.isNotEmpty) {
+    String startDate = stDate.substring(0, 10);
+    String endDate = enDate.substring(0, 10);
+    if ((startDate.isNotEmpty && endDate.isNotEmpty) &&
+        (int.parse(stDate.substring(0, 4)) <=
+            int.parse(enDate.substring(0, 4)))) {
       setState(() {
         queryParams['start_date'] = startDate;
         queryParams['end_date'] = endDate;
@@ -67,7 +71,7 @@ class _HomeWidgetState extends State<HomeWidget> {
       });
     } else {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('Please insert all dates'),
+        content: Text('Please fill all dates correctly.'),
         backgroundColor: Colors.white,
       ));
       throw Exception('Fill all fields.');
@@ -78,8 +82,6 @@ class _HomeWidgetState extends State<HomeWidget> {
   void dispose() {
     super.dispose();
     _scrollController.dispose();
-    _textEditingController1.dispose();
-    _textEditingController2.dispose();
   }
 
   @override
@@ -89,7 +91,7 @@ class _HomeWidgetState extends State<HomeWidget> {
     return SafeArea(
       top: true,
       child: Container(
-        color: Colors.black,
+        color: Colors.white,
         child: FutureBuilder<List<MemeModel>>(
           future: models,
           builder: (context, snapshot) {
@@ -97,64 +99,14 @@ class _HomeWidgetState extends State<HomeWidget> {
               return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Container(
-                    width: double.infinity,
-                    color: const Color(0xFF000080),
-                    alignment: Alignment.center,
-                    height: 40.0,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        const SizedBox(
-                          width: 20,
-                        ),
-                        Flexible(
-                          child: TextField(
-                            controller: _textEditingController1,
-                            keyboardType: TextInputType.datetime,
-                            decoration: const InputDecoration(
-                              hintText: 'Start Date',
-                              hintStyle: TextStyle(
-                                color: Colors.grey,
-                                fontStyle: FontStyle.normal,
-                                fontSize: 10.0,
-                              ),
-                            ),
-                            style: Theme.of(context).textTheme.button,
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 20,
-                        ),
-                        Flexible(
-                          child: TextField(
-                            controller: _textEditingController2,
-                            decoration: const InputDecoration(
-                              hintText: 'End Date',
-                              hintStyle: TextStyle(
-                                color: Colors.grey,
-                                fontStyle: FontStyle.normal,
-                                fontSize: 10.0,
-                              ),
-                            ),
-                            style: Theme.of(context).textTheme.button,
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 100,
-                        ),
-                        IconButton(
-                          onPressed: updateList,
-                          icon: const Icon(
-                            Icons.refresh,
-                            color: Colors.white,
-                          ),
-                        ),
-                        const SizedBox(
-                          width: 20,
-                        ),
-                      ],
-                    ),
+                  SearchToolBar(
+                    updateList: updateList,
+                    callBack: (val) => setState(() {
+                      stDate = val;
+                    }),
+                    callBackTwo: (val) => setState(() {
+                      enDate = val;
+                    }),
                   ),
                   Expanded(
                     flex: 1,
@@ -178,7 +130,8 @@ class _HomeWidgetState extends State<HomeWidget> {
                                     child: ListTile(
                                       textColor: Colors.white,
                                       selected: listItemSelected,
-                                      tileColor: const Color(0xFFF5F5DC),
+                                      tileColor: Colors
+                                          .white, //const Color(0xFFF5F5DC),
                                       onTap: () {},
                                       dense: true,
                                       title: Text(
