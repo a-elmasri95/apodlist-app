@@ -1,3 +1,4 @@
+import 'package:app_one/utils/colors.dart';
 import 'package:flutter/material.dart';
 
 typedef StringCallback = void Function(String val);
@@ -22,7 +23,7 @@ class _SearchToolBarState extends State<SearchToolBar> {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      color: const Color(0xFF434848),
+      color: AppColors.royalBlue,
       alignment: Alignment.center,
       height: 45.0,
       child: Row(
@@ -36,7 +37,7 @@ class _SearchToolBarState extends State<SearchToolBar> {
               onPressed: () {
                 showDatePicker(
                   context: context,
-                  initialDate: DateTime(2018, 1, 1),
+                  initialDate: DateTime(2020, 1, 1),
                   firstDate: DateTime(2010),
                   lastDate: DateTime.now(),
                 ).then((date) {
@@ -55,13 +56,13 @@ class _SearchToolBarState extends State<SearchToolBar> {
                     ),
                   ),
                   backgroundColor: MaterialStateProperty.all<Color>(
-                    const Color(0xFFF7F8F8),
+                    const Color(0xFF434848),
                   )),
               child: const Text(
                 'Start Date',
                 style: TextStyle(
                   fontSize: 10.0,
-                  color: Colors.black,
+                  color: Colors.white,
                 ),
               ),
             ),
@@ -74,7 +75,7 @@ class _SearchToolBarState extends State<SearchToolBar> {
               onPressed: () {
                 showDatePicker(
                   context: context,
-                  initialDate: DateTime(2018, 1, 1),
+                  initialDate: DateTime(2020, 1, 1),
                   firstDate: DateTime(2010),
                   lastDate: DateTime.now(),
                 ).then((date) {
@@ -93,13 +94,13 @@ class _SearchToolBarState extends State<SearchToolBar> {
                     ),
                   ),
                   backgroundColor: MaterialStateProperty.all<Color>(
-                    const Color(0xFFF7F8F8),
+                    const Color(0xFF434848),
                   )),
               child: const Text(
                 'End Date',
                 style: TextStyle(
                   fontSize: 10.0,
-                  color: Colors.black,
+                  color: Colors.white,
                 ),
               ),
             ),
